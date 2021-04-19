@@ -2,16 +2,23 @@ package com.example.loginandfirestore;
 
 import android.os.Bundle;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Source;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import java.util.List;
+import java.util.Timer;
 
 
 public class BottomNavActivity extends AppCompatActivity {
@@ -34,24 +41,32 @@ public class BottomNavActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navView, navController);
 
         DB = FirebaseFirestore.getInstance();
-        DocumentReference docRef = db.collection("cities").document("SF");
+        DocumentReference docRef = DB.collection("users").document(MainActivity.getUser().getEmail());
 
-    // Source can be CACHE, SERVER, or DEFAULT.
-        Source source = Source.CACHE;
 
-// Get the document, forcing the SDK to use the offline cache
+
+        Source source = Source.DEFAULT;
+
+        // Get the document, forcing the SDK to use the offline cache
         docRef.get(source).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     // Document found in the offline cache
                     DocumentSnapshot document = task.getResult();
-                    Log.d(TAG, "Cached document data: " + document.getData());
+                    if (document.getData().get("Favorites") != null){
+                        MainActivity.setFavs((List<String>)document.getData().get("Favorites"));
+                    }
+                    System.out.println("Cached document data: " + document.getData());
                 } else {
-                    Log.d(TAG, "Cached get failed: ", task.getException());
+                    System.out.println("GET FAILED");
                 }
             }
         });
+
+        WriteDBTask task = new WriteDBTask();
+        Timer timer = new Timer("DB Timer");
+        timer.schedule(task,60000L,60000L);
 
     }
 

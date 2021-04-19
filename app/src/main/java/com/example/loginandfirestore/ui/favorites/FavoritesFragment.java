@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -46,14 +47,20 @@ public class FavoritesFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onClickTest();
+                onClickToast();
             }
         });
 
 
     }
 
+    public void onClickToast(){
+        System.out.println("Toasty");
+        Toast.makeText(getContext(),MainActivity.getFavs().toString(),Toast. LENGTH_SHORT).show();
+    }
+
     public void onClickTest(){
+
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         Map<String, Object> user = new HashMap<>();
@@ -61,6 +68,9 @@ public class FavoritesFragment extends Fragment {
         str.add("IBM");
         str.add("AAPL");
         user.put("Favorites", str);
+        for(String s : MainActivity.getFavs()){
+            System.out.println(s);
+        }
 
         // Add a new document with a generated ID
         db.collection("users").document(MainActivity.getUser().getEmail())

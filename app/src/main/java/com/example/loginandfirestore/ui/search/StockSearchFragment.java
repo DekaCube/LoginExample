@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.loginandfirestore.MainActivity;
 import com.example.loginandfirestore.Stock;
 import com.example.loginandfirestore.AlphaVantage;
 
@@ -68,16 +69,39 @@ public class StockSearchFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //Add code here to do what you want when an Item is clicked
-                Toast.makeText(getContext(), mStocks.get(i).getSymbol().toString(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), mStocks.get(i).getSymbol().toString(), Toast.LENGTH_SHORT).show();
+                if(MainActivity.isFav(mStocks.get(i).getSymbol())){
+                    MainActivity.remFav(mStocks.get(i).getSymbol());
+                    Toast.makeText(getContext(), mStocks.get(i).getSymbol() + " REMOVED FROM FAVORITES", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    MainActivity.addFav(mStocks.get(i).getSymbol());
+                    Toast.makeText(getContext(), mStocks.get(i).getSymbol() + " ADDED TO FAVORITES", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         mStockListView.setAdapter(mStockListAdapter);
+        mSearch = getView().findViewById(R.id.searchButton);
+        mQuery = getView().findViewById(R.id.query);
+        mSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onSearch();
+            }
+        });
 
     }
 
-    public void onSearch(View v){
+    public void onSearch(){
         //TODO: Validation
         AlphaVantage av = AlphaVantage.getInstance();
+        String q = mQuery.getText().toString();
+        Stock stk = av.getStock(q);
+        if (stk != null) {
+            mStocks.add(stk);
+        }
+        mStockListView.setAdapter(mStockListAdapter);
+
 
     }
 }

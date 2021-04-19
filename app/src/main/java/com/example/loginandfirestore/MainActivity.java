@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,6 +90,31 @@ public class MainActivity extends AppCompatActivity {
 
     public static List<String> getFavs(){
         return cFavorites;
+    }
+
+    public static void setFavs(List<String> s){
+        cFavorites = s;
+    }
+
+    public static void addFav(String s){
+        cFavorites.add(s);
+    }
+
+    public static boolean isFav(String s){
+        for(String k : cFavorites){
+            if(k.equals(s)){
+                return true;
+            }
+
+        }
+        return false;
+    }
+
+    public static void remFav(String s){
+        if (isFav(s)){
+            cFavorites.remove(s);
+        }
+        return;
     }
 
 
