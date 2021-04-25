@@ -54,7 +54,7 @@ public class BottomNavActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     // Document found in the offline cache
                     DocumentSnapshot document = task.getResult();
-                    if (document.getData().get("Favorites") != null){
+                    if ((document.getData() != null) && (document.getData().get("Favorites") != null)){
                         MainActivity.setFavs((List<String>)document.getData().get("Favorites"));
                     }
                     System.out.println("Cached document data: " + document.getData());
